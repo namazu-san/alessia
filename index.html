@@ -31,6 +31,8 @@
             padding: 10px 0;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             z-index: 100;
+            display: flex;
+            flex-direction: column;
         }
         
         .header h1 {
@@ -38,6 +40,45 @@
             color: #4a6fa5;
             font-size: 1.8rem;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chapter-title {
+            color: #5a7fb5;
+            font-size: 1.2rem;
+            margin-top: 5px;
+        }
+        
+        .chapters-menu {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            padding: 0 15px;
+        }
+        
+        .chapter-button {
+            padding: 5px 15px;
+            background-color: #e2e8f0;
+            border: none;
+            border-radius: 20px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.9rem;
+            color: #4a6fa5;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chapter-button:hover {
+            background-color: #d1ddf0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .chapter-button.active {
+            background-color: #4a6fa5;
+            color: white;
         }
         
         .container {
@@ -196,6 +237,11 @@
     <div class="page-wrapper">
         <header class="header">
             <h1>La carica di Alessia</h1>
+            <div id="chapterTitle" class="chapter-title">Capitolo 1: Assalto al paninaro </div>
+            <div class="chapters-menu">
+                <button class="chapter-button active" data-chapter="1">Capitolo 1</button>
+                <button class="chapter-button" data-chapter="2">Capitolo 2</button>
+            </div>
         </header>
         
         <div class="container">
@@ -212,12 +258,66 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.getElementById('imageContainer');
+            const chapterTitle = document.getElementById('chapterTitle');
+            const chapterButtons = document.querySelectorAll('.chapter-button');
             let bubble = null;
-            let messages = [
-                "Verso il panino al tonno e oltre !!!",
-                "OHHH non prendermi in giro ",
-            ];
+            
+            // Definizione dei capitoli
+            const chapters = {
+                1: {
+                    title: "Assalto al paninaro",
+                    image: "index.png",
+                    messages: [
+                        "Verso il panino al tonno e oltre !!!",
+                        "OHHH non prendermi in giro ",
+                    ]
+                },
+                2: {
+                    title: "La scoperta",
+                    image: "index2.png", 
+                    messages: [
+                        "Ne valsa la pena!!!",
+                        "Ma anche kebab come dice Roman non era male :3",
+                    ]
+                }
+            };
+            
+            let currentChapter = 1;
             let currentMessage = 0;
+            
+            // Funzione per cambiare capitolo
+            function changeChapter(chapterNum) {
+                currentChapter = chapterNum;
+                currentMessage = 0;
+                
+                // Aggiorna il titolo del capitolo
+                chapterTitle.textContent = `Capitolo ${chapterNum}: ${chapters[chapterNum].title}`;
+                
+                // Aggiorna l'immagine di sfondo
+                container.style.backgroundImage = `url('${chapters[chapterNum].image}')`;
+                
+                // Rimuove il fumetto se presente
+                if (bubble) {
+                    bubble.remove();
+                    bubble = null;
+                }
+                
+                // Aggiorna il pulsante attivo
+                chapterButtons.forEach(button => {
+                    if (parseInt(button.dataset.chapter) === chapterNum) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Aggiungi gestori eventi ai pulsanti dei capitoli
+            chapterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    changeChapter(parseInt(this.dataset.chapter));
+                });
+            });
             
             // Rimuove l'animazione pulse al primo click
             container.addEventListener('click', function() {
@@ -271,12 +371,18 @@
                 const x = event.clientX;
                 const y = event.clientY;
                 
+                // Ottiene i messaggi del capitolo corrente
+                const chapterMessages = chapters[currentChapter].messages;
+                
                 // Crea la nuvoletta con il messaggio corrente
-                createBubble(x, y, messages[currentMessage]);
+                createBubble(x, y, chapterMessages[currentMessage]);
                 
                 // Passa al messaggio successivo, tornando al primo quando raggiunge la fine
-                currentMessage = (currentMessage + 1) % messages.length;
+                currentMessage = (currentMessage + 1) % chapterMessages.length;
             });
+            
+            // Inizializzazione al caricamento della pagina
+            changeChapter(1);
         });
     </script>
 </body>
