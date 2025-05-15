@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immagine con Fumetto</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            background-image: url('index.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #f5f5f5; /* Colore di sfondo leggero per le aree non coperte dall'immagine */
+            cursor: pointer;
+        }
+        
+        .speech-bubble {
+            position: absolute;
+            background-color: white;
+            border-radius: 15px;
+            padding: 15px;
+            max-width: 250px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 16px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border: 15px solid transparent;
+            border-top-color: rgb(173, 231, 171);
+            border-bottom: 0;
+            margin-left: -15px;
+        }
+        
+        .visible {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="imageContainer">
+        <!-- La nuvoletta di dialogo verrà inserita qui dal JavaScript -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('imageContainer');
+            let bubble = null;
+            let messages = [
+                "Verso il panino al tonno e oltre !!!",
+                "OHHH non prendermi in giro ",
+                
+            ];
+            let currentMessage = 0;
+            
+            // Funzione per creare la nuvoletta
+            function createBubble(x, y, message) {
+                // Rimuove la nuvoletta esistente se presente
+                if (bubble) {
+                    bubble.remove();
+                }
+                
+                // Crea una nuova nuvoletta
+                bubble = document.createElement('div');
+                bubble.className = 'speech-bubble';
+                bubble.textContent = message;
+                
+                // Posiziona la nuvoletta in base al click
+                bubble.style.left = `${x - 125}px`; // Centra la nuvoletta
+                bubble.style.top = `${y - 100}px`;  // Posiziona la nuvoletta sopra il punto di click
+                
+                // Aggiunge la nuvoletta al container
+                container.appendChild(bubble);
+                
+                // Rende visibile la nuvoletta con un leggero ritardo per l'animazione
+                setTimeout(() => {
+                    bubble.classList.add('visible');
+                }, 10);
+            }
+            
+            // Gestisce il click sull'immagine
+            container.addEventListener('click', function(event) {
+                // Ottiene le coordinate del click
+                const x = event.clientX;
+                const y = event.clientY;
+                
+                // Crea la nuvoletta con il messaggio corrente
+                createBubble(x, y, messages[currentMessage]);
+                
+                // Passa al messaggio successivo, tornando al primo quando raggiunge la fine
+                currentMessage = (currentMessage + 1) % messages.length;
+            });
+        });
+    </script>
+</body>
+</html>
