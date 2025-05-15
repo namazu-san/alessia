@@ -3,40 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Immagine con Fumetto</title>
+    <link rel="icon" type="image/x-icon" href="ico.png">
+    <title>La carica di Alessia</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+        
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
             overflow: hidden;
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .page-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .header {
+            background-color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: #4a6fa5;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
         
         .container {
             position: relative;
-            height: 100%;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .image-container {
+            position: relative;
+            max-height: 85vh;
+            max-width: 95%;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .image-container {
+            position: relative;
+            max-height: 85vh;
+            max-width: 95%;
             width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            background-color: white;
+            cursor: pointer;
             background-image: url('index.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            background-color: #f5f5f5; /* Colore di sfondo leggero per le aree non coperte dall'immagine */
-            cursor: pointer;
+            min-height: 500px;
+        }
+        
+        .background-image {
+            width: 100%;
+            height: 100%;
+            min-height: 300px;
         }
         
         .speech-bubble {
             position: absolute;
-            background-color: white;
-            border-radius: 15px;
-            padding: 15px;
+            background-color: rgb(173, 231, 171);
+            border-radius: 18px;
+            padding: 12px 18px;
             max-width: 250px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            font-family: 'Comic Sans MS', cursive, sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            font-family: 'Nunito', cursive, sans-serif;
             font-size: 16px;
             z-index: 10;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(0.9);
+            color: #333;
+            font-weight: 600;
+            text-align: center;
         }
         
         .speech-bubble:after {
@@ -50,16 +113,100 @@
             border-top-color: rgb(173, 231, 171);
             border-bottom: 0;
             margin-left: -15px;
+            filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
         }
         
         .visible {
             opacity: 1;
+            transform: scale(1);
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #4a6fa5;
+            font-size: 0.9rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 8px;
+            border-radius: 20px;
+            margin: 0 auto;
+            width: fit-content;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .instructions:hover {
+            opacity: 1;
+        }
+        
+        /* Media Queries per responsività */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            
+            .speech-bubble {
+                max-width: 200px;
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+            
+            .background-image {
+                min-height: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header {
+                padding: 5px 0;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .speech-bubble {
+                max-width: 160px;
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+            
+            .instructions {
+                font-size: 0.8rem;
+                padding: 5px;
+            }
+        }
+        
+        /* Animazione di pulsazione per suggerire l'interattività */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
 <body>
-    <div class="container" id="imageContainer">
-        <!-- La nuvoletta di dialogo verrà inserita qui dal JavaScript -->
+    <div class="page-wrapper">
+        <header class="header">
+            <h1>La carica di Alessia</h1>
+        </header>
+        
+        <div class="container">
+            <div class="image-container pulse" id="imageContainer">
+                <!-- La nuvoletta di dialogo verrà inserita qui dal JavaScript -->
+            </div>
+            
+            <div class="instructions">
+                Clicca sull'immagine per interagire
+            </div>
+        </div>
     </div>
 
     <script>
@@ -69,28 +216,48 @@
             let messages = [
                 "Verso il panino al tonno e oltre !!!",
                 "OHHH non prendermi in giro ",
-                
             ];
             let currentMessage = 0;
             
-            // Funzione per creare la nuvoletta
+            // Rimuove l'animazione pulse al primo click
+            container.addEventListener('click', function() {
+                container.classList.remove('pulse');
+            }, { once: true });
+            
+            // Funzione per creare la nuvoletta con posizionamento intelligente
             function createBubble(x, y, message) {
                 // Rimuove la nuvoletta esistente se presente
                 if (bubble) {
                     bubble.remove();
                 }
                 
+                // Calcola la posizione relativa all'interno dell'immagine
+                const rect = container.getBoundingClientRect();
+                const relX = x - rect.left;
+                const relY = y - rect.top;
+                
                 // Crea una nuova nuvoletta
                 bubble = document.createElement('div');
                 bubble.className = 'speech-bubble';
                 bubble.textContent = message;
                 
-                // Posiziona la nuvoletta in base al click
-                bubble.style.left = `${x - 125}px`; // Centra la nuvoletta
-                bubble.style.top = `${y - 100}px`;  // Posiziona la nuvoletta sopra il punto di click
-                
                 // Aggiunge la nuvoletta al container
                 container.appendChild(bubble);
+                
+                // Calcola le dimensioni della nuvoletta dopo averla aggiunta al DOM
+                const bubbleRect = bubble.getBoundingClientRect();
+                
+                // Calcola la posizione ottimale per evitare che esca dai bordi
+                let bubbleX = relX - bubbleRect.width / 2;
+                let bubbleY = relY - bubbleRect.height - 20;
+                
+                // Assicura che la nuvoletta rimanga all'interno del container
+                bubbleX = Math.max(10, Math.min(rect.width - bubbleRect.width - 10, bubbleX));
+                bubbleY = Math.max(10, Math.min(rect.height - bubbleRect.height - 40, bubbleY));
+                
+                // Posiziona la nuvoletta
+                bubble.style.left = `${bubbleX}px`;
+                bubble.style.top = `${bubbleY}px`;
                 
                 // Rende visibile la nuvoletta con un leggero ritardo per l'animazione
                 setTimeout(() => {
