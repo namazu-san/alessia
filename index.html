@@ -68,6 +68,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         
         .chapter-button:hover {
@@ -81,6 +82,14 @@
             color: white;
         }
         
+        .chapter-button.has-audio::after {
+            content: '🔊';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 12px;
+        }
+        
         .container {
             position: relative;
             flex: 1;
@@ -88,17 +97,6 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
-        }
-        
-        .image-container {
-            position: relative;
-            max-height: 85vh;
-            max-width: 95%;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            background-color: white;
-            cursor: pointer;
         }
         
         .image-container {
@@ -162,6 +160,55 @@
             transform: scale(1);
         }
         
+        .audio-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: none;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+        }
+        
+        .audio-controls.visible {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .audio-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+        
+        .audio-button:hover {
+            background-color: rgba(74, 111, 165, 0.1);
+        }
+        
+        .volume-control {
+            width: 80px;
+            height: 5px;
+            background: #ddd;
+            outline: none;
+            border-radius: 5px;
+        }
+        
+        .volume-control::-webkit-slider-thumb {
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            background-color: #4a6fa5;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
         .instructions {
             position: absolute;
             bottom: 15px;
@@ -205,6 +252,16 @@
             .background-image {
                 min-height: 250px;
             }
+            
+            .audio-controls {
+                top: 10px;
+                right: 10px;
+                padding: 8px;
+            }
+            
+            .volume-control {
+                width: 60px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -226,6 +283,14 @@
                 font-size: 0.8rem;
                 padding: 5px;
             }
+            
+            .audio-controls {
+                padding: 6px;
+            }
+            
+            .audio-button {
+                font-size: 16px;
+            }
         }
         
         /* Animazione di pulsazione per suggerire l'interattività */
@@ -237,6 +302,16 @@
         
         .pulse {
             animation: pulse 2s infinite;
+        }
+        
+        /* Animazione per indicatore audio */
+        @keyframes audioPlaying {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .audio-playing {
+            animation: audioPlaying 1s infinite;
         }
     </style>
 </head>
@@ -251,7 +326,7 @@
                 <button class="chapter-button" data-chapter="3">Capitolo 3</button>
                 <button class="chapter-button" data-chapter="4">Capitolo 4</button>
                 <button class="chapter-button" data-chapter="5">Capitolo 5</button>
-                <button class="chapter-button" data-chapter="6">Capitolo 6</button>
+                <button class="chapter-button has-audio" data-chapter="6">Capitolo 6</button>
             </div>
             <p>Copyright &copy2025; Created&Designed by <a href="https://cat-bounce.com">Roman Modugno</a></span></p>
         </header>
@@ -259,20 +334,40 @@
         <div class="container">
             <div class="image-container pulse" id="imageContainer">
                 <!-- La nuvoletta di dialogo verrà inserita qui dal JavaScript -->
+                
+                <!-- Controlli audio (visibili solo nel capitolo 6) -->
+                <div class="audio-controls" id="audioControls">
+                    <button class="audio-button" id="playPauseBtn">▶️</button>
+                    <button class="audio-button" id="stopBtn">⏹️</button>
+                    <input type="range" class="volume-control" id="volumeControl" min="0" max="100" value="50">
+                    <span id="audioStatus">🔊</span>
+                </div>
             </div>
             
-            <div class="instructions">
+            <div class="instructions" id="instructions">
                 Clicca sull'immagine per interagire
             </div>
         </div>
     </div>
     
+    <!-- Audio element (hidden) -->
+    <audio id="chapterAudio" preload="metadata">
+        <source src="chapter6.mp3" type="audio/mpeg">
+        Il tuo browser non supporta l'elemento audio.
+    </audio>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const container = document.getElementById('imageContainer');
             const chapterTitle = document.getElementById('chapterTitle');
             const chapterButtons = document.querySelectorAll('.chapter-button');
+            const audioControls = document.getElementById('audioControls');
+            const audioElement = document.getElementById('chapterAudio');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const volumeControl = document.getElementById('volumeControl');
+            const audioStatus = document.getElementById('audioStatus');
+            const instructions = document.getElementById('instructions');
             let bubble = null;
             
             // Definizione dei capitoli
@@ -323,24 +418,93 @@
                     messages: [
                         "Non sono sicuro di essere qui per aiutarti!",
                         "VOGLIO LA TARTARUGA !!!MA PRIMA CORNETTO!!! "
-                        
-                    ]
+                    ],
+                    hasAudio: true,
+                    audioFile: "chapter6.mp3"
                 }
             };
             
             let currentChapter = 1;
             let currentMessage = 0;
             
+            // Gestione audio
+            function initAudio() {
+                // Imposta il volume iniziale
+                audioElement.volume = volumeControl.value / 100;
+                
+                // Gestisce il cambio di volume
+                volumeControl.addEventListener('input', function() {
+                    audioElement.volume = this.value / 100;
+                });
+                
+                // Gestisce play/pause
+                playPauseBtn.addEventListener('click', function() {
+                    if (audioElement.paused) {
+                        audioElement.play();
+                        playPauseBtn.textContent = '⏸️';
+                        audioStatus.classList.add('audio-playing');
+                    } else {
+                        audioElement.pause();
+                        playPauseBtn.textContent = '▶️';
+                        audioStatus.classList.remove('audio-playing');
+                    }
+                });
+                
+                // Gestisce stop
+                stopBtn.addEventListener('click', function() {
+                    audioElement.pause();
+                    audioElement.currentTime = 0;
+                    playPauseBtn.textContent = '▶️';
+                    audioStatus.classList.remove('audio-playing');
+                });
+                
+                // Gestisce la fine dell'audio
+                audioElement.addEventListener('ended', function() {
+                    playPauseBtn.textContent = '▶️';
+                    audioStatus.classList.remove('audio-playing');
+                });
+                
+                // Gestisce errori di caricamento
+                audioElement.addEventListener('error', function() {
+                    console.log('Errore nel caricamento dell\'audio');
+                    audioStatus.textContent = '🔇';
+                });
+                
+                // Gestisce il caricamento riuscito
+                audioElement.addEventListener('loadedmetadata', function() {
+                    console.log('Audio caricato con successo');
+                    audioStatus.textContent = '🔊';
+                });
+            }
+            
             // Funzione per cambiare capitolo
             function changeChapter(chapterNum) {
                 currentChapter = chapterNum;
                 currentMessage = 0;
+                
+                // Ferma l'audio se sta suonando
+                if (!audioElement.paused) {
+                    audioElement.pause();
+                    audioElement.currentTime = 0;
+                    playPauseBtn.textContent = '▶️';
+                    audioStatus.classList.remove('audio-playing');
+                }
                 
                 // Aggiorna il titolo del capitolo
                 chapterTitle.textContent = `Capitolo ${chapterNum}: ${chapters[chapterNum].title}`;
                 
                 // Aggiorna l'immagine di sfondo
                 container.style.backgroundImage = `url('${chapters[chapterNum].image}')`;
+                
+                // Gestisce i controlli audio
+                if (chapters[chapterNum].hasAudio) {
+                    audioControls.classList.add('visible');
+                    audioElement.src = chapters[chapterNum].audioFile;
+                    instructions.textContent = "Clicca sull'immagine per interagire - Audio disponibile!";
+                } else {
+                    audioControls.classList.remove('visible');
+                    instructions.textContent = "Clicca sull'immagine per interagire";
+                }
                 
                 // Rimuove il fumetto se presente
                 if (bubble) {
@@ -409,10 +573,22 @@
                 setTimeout(() => {
                     bubble.classList.add('visible');
                 }, 10);
+                
+                // Nel capitolo 6, avvia l'audio automaticamente quando appare una nuvoletta
+                if (currentChapter === 6 && chapters[6].hasAudio && audioElement.paused) {
+                    audioElement.play();
+                    playPauseBtn.textContent = '⏸️';
+                    audioStatus.classList.add('audio-playing');
+                }
             }
             
             // Gestisce il click sull'immagine
             container.addEventListener('click', function(event) {
+                // Evita che il click sui controlli audio attivi la nuvoletta
+                if (event.target.closest('.audio-controls')) {
+                    return;
+                }
+                
                 // Ottiene le coordinate del click
                 const x = event.clientX;
                 const y = event.clientY;
@@ -427,7 +603,8 @@
                 currentMessage = (currentMessage + 1) % chapterMessages.length;
             });
             
-            // Inizializzazione al caricamento della pagina
+            // Inizializzazione
+            initAudio();
             changeChapter(1);
         });
     </script>
