@@ -11,9 +11,7 @@
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
             width: 100%;
-            overflow: hidden;
             font-family: 'Nunito', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
@@ -21,7 +19,13 @@
         .page-wrapper {
             display: flex;
             flex-direction: column;
-            height: 100%;
+            min-height: 100vh;
+            width: 100%;
+        }
+        .page-footer {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
             width: 100%;
         }
         
@@ -237,6 +241,43 @@
             font-weight: bold;
         }
         
+        /* Stili per il secondo page-wrapper */
+        .page-wrapper:nth-child(2) {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px 20px;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .page-footer:nth-child(2) {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px 20px;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            margin-top: -15em;
+        }
+        
+        .page-wrapper:nth-child(2) p {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            font-size: 1.1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .page-footer:nth-child(2) p {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 1em;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            font-size: 2.1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        
         /* Media Queries per responsività */
         @media (max-width: 768px) {
             .header h1 {
@@ -329,7 +370,8 @@
                 <button class="chapter-button has-audio active" data-chapter="6">Capitolo 6</button>
             </div>
             <p>Copyright &copy2025; Created&Designed by <a href="https://cat-bounce.com">Roman Modugno</a></span></p>
-        </header>
+            
+            </header>
         
         <div class="container">
             <div class="image-container pulse" id="imageContainer">
@@ -348,6 +390,11 @@
                 Clicca sull'immagine per interagire
             </div>
         </div>
+        
+    </div>
+    <div class="page-footer">
+        <p>Nei ruoli:<br>Polpettina:Alessia<br>Orso:Roman<br>Cavallo:Cavallo</p>
+
     </div>
     
     <!-- Audio element (hidden) -->
@@ -376,8 +423,8 @@
                     title: "Assalto al paninaro",
                     image: "index.png",
                     messages: [
-                        "Verso il panino al tonno e oltre !!!",
-                        "OHHH non prendermi in giro ",
+                        "Polpettina:Verso il panino al tonno e oltre !!!",
+                        "Polpettina:OHHH non prendermi in giro ",
                     ],
                     hasAudio: true,
                     audioFile: "chapter1.mp3"
@@ -386,8 +433,8 @@
                     title: "La scoperta",
                     image: "index2.png", 
                     messages: [
-                        "Ne valsa la pena!!!",
-                        "Ma anche kebab come dice Roman non era male :3",
+                        "Polpettina:Ne valsa la pena!!!",
+                        "Polpettina:Ma anche kebab come dice Roman non era male :3",
                     ],
                     hasAudio: true,
                     audioFile: "chapter2.mp3"
@@ -396,8 +443,8 @@
                     title: "Vendetta del kebab",
                     image: "index3.png", 
                     messages: [
-                        "Che ce Roman non sfotti piu ?!!",
-                        "Mangerai cio che dico io !!!"
+                        "Polpettina:Che ce Roman non sfotti piu ?!!",
+                        "Polpettina:Mangerai cio che dico io !!!"
                     ],
                     hasAudio: true,
                     audioFile: "chapter3.mp3"
@@ -406,24 +453,24 @@
                     title: "La riconciliazione",
                     image: "index4.png", 
                     messages: [
-                        "Dai facciamo pace, mangiamo insieme!",
-                        "Cornetti per tutti , così siamo tutti contenti!"
+                        "Orso:Dai facciamo pace, mangiamo insieme!",
+                        "Orso:Cornetti per tutti , così siamo tutti contenti!"
                     ]
                 },
                 5: {
                     title: "La grande battaglia del oriente",
                     image: "index5.png", 
                     messages: [
-                        "E allora ... indossero il mio abito da battaglia del kebabaro migliore!",
-                        "Panino alla scipollaaaa vieni a meeeee!!!"
+                        "Polpettina:E allora ... indossero il mio abito da battaglia del kebabaro migliore!",
+                        "Polpettina:Panino alla scipollaaaa vieni a meeeee!!!"
                     ]
                 },
                 6: {
                     title: "La sfida estiva",
                     image: "index6.png", 
                     messages: [
-                        "Non sono sicuro di essere qui per aiutarti!",
-                        "VOGLIO LA TARTARUGA !!!MA PRIMA CORNETTO!!! "
+                        "Orso:Non sono sicuro di essere qui per aiutarti!",
+                        "Polpettina:VOGLIO LA TARTARUGA !!!MA PRIMA CORNETTO!!! "
                     ],
                     hasAudio: true,
                     audioFile: "chapter6.mp3"
