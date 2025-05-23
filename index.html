@@ -269,13 +269,12 @@
         }
         .page-footer:nth-child(2) p {
             background-color: rgba(255, 255, 255, 0.8);
-            padding: 1em;
+            padding: 0.8em;
             border-radius: 12px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
             font-size: 2.1rem;
             max-width: 400px;
             margin: 0 auto;
-            
         }
         
         
@@ -304,9 +303,6 @@
             .volume-control {
                 width: 60px;
             }
-             .page-footer:nth-child(2) p {
-                margin-right: 1.8em; 
-             }
         }
         
         @media (max-width: 480px) {
@@ -336,9 +332,6 @@
             .audio-button {
                 font-size: 16px;
             }
-             .page-footer:nth-child(2) p {
-                margin-right: 1.8em; 
-             }
         }
         
         /* Animazione di pulsazione per suggerire l'interattività */
@@ -375,6 +368,7 @@
                 <button class="chapter-button active" data-chapter="4">Capitolo 4</button>
                 <button class="chapter-button active" data-chapter="5">Capitolo 5</button>
                 <button class="chapter-button has-audio active" data-chapter="6">Capitolo 6</button>
+                <button class="chapter-button has-audio active" data-chapter="7">Capitolo 7</button>
             </div>
             <p>Copyright &copy2025; Created&Designed by <a href="https://cat-bounce.com">Roman Modugno</a></span></p>
             
@@ -468,7 +462,7 @@
                     title: "La grande battaglia del oriente",
                     image: "index5.png", 
                     messages: [
-                        "Polpettina:E allora ... indossero il mio abito da battaglia migliore per  kebabaro !",
+                        "Polpettina:E allora ... indossero il mio abito da battaglia migliore per kebabaro !",
                         "Polpettina:Panino alla scipollaaaa vieni a meeeee!!!"
                     ]
                 },
@@ -481,6 +475,17 @@
                     ],
                     hasAudio: true,
                     audioFile: "chapter6.mp3"
+                },
+                7: {
+                    title: "Amazone motivata",
+                    image: "index7.png", 
+                    messages: [
+                        "Polpettina:sarai piu veloce del mio cavallo ma non di me !!!",
+                        "Polpettina:NON VEDI COME SONO TENERA !!! ",
+                        "Polpettina:SE MI DICI DOVE HAI MESSO GLI OREO NON TI FACCIO NIENTE !!! ",
+                    ],
+                    hasAudio: true,
+                    audioFile: "chapter7.mp3"
                 }
             };
             
