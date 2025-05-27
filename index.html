@@ -234,6 +234,100 @@
             opacity: 1;
         }
 
+        /* Stili per il capitolo 9 - Domanda e pulsanti */
+        .question-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 50;
+            border-radius: 12px;
+        }
+        
+        .question-overlay.visible {
+            display: flex;
+        }
+        
+        .question-text {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a6fa5;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            max-width: 80%;
+        }
+        
+        .answer-buttons {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .answer-button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .answer-button.yes {
+            background-color: #4CAF50;
+            color: white;
+            transform-origin: center;
+        }
+        
+        .answer-button.no {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .answer-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Animazione per far crescere il pulsante SI */
+        @keyframes growYes {
+            to {
+                transform: scale(var(--scale-factor));
+            }
+        }
+        
+        .growing {
+            animation: growYes 0.5s ease-out forwards;
+        }
+        
+        /* Quando il pulsante SI copre tutto lo schermo */
+        .fullscreen-yes {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            border-radius: 0 !important;
+            z-index: 9999 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 5rem !important;
+        }
+
         p {
             display: block;
             margin-bottom: 5px;
@@ -303,6 +397,16 @@
             .volume-control {
                 width: 60px;
             }
+
+            .question-text {
+                font-size: 1.2rem;
+                padding: 20px;
+            }
+            
+            .answer-button {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
         }
         
         @media (max-width: 480px) {
@@ -331,6 +435,21 @@
             
             .audio-button {
                 font-size: 16px;
+            }
+
+            .question-text {
+                font-size: 1rem;
+                padding: 15px;
+            }
+            
+            .answer-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .answer-buttons {
+                gap: 20px;
+                flex-direction: column;
             }
         }
         
@@ -370,6 +489,7 @@
                 <button class="chapter-button has-audio active" data-chapter="6">Capitolo 6</button>
                 <button class="chapter-button has-audio active" data-chapter="7">Capitolo 7</button>
                 <button class="chapter-button has-audio active" data-chapter="8">Capitolo 8</button>
+                <button class="chapter-button active" data-chapter="9">Capitolo 9</button>
             </div>
             <p>Copyright &copy2025; Created&Designed by <a href="https://cat-bounce.com">Roman Modugno</a></span></p>
             
@@ -379,12 +499,23 @@
             <div class="image-container pulse" id="imageContainer">
                 <!-- La nuvoletta di dialogo verrà inserita qui dal JavaScript -->
                 
-                <!-- Controlli audio (visibili solo nel capitolo 6) -->
+                <!-- Controlli audio (visibili solo nei capitoli con audio) -->
                 <div class="audio-controls" id="audioControls">
                     <button class="audio-button" id="playPauseBtn">▶️</button>
                     <button class="audio-button" id="stopBtn">⏹️</button>
                     <input type="range" class="volume-control" id="volumeControl" min="0" max="100" value="50">
                     <span id="audioStatus">🔊</span>
+                </div>
+
+                <!-- Overlay per la domanda del capitolo 9 -->
+                <div class="question-overlay" id="questionOverlay">
+                    <div class="question-text" id="questionText">
+                        Andiamo a fare sgarro venerdi di kebab polpettina ?
+                    </div>
+                    <div class="answer-buttons">
+                        <button class="answer-button yes" id="yesButton">SÌ</button>
+                        <button class="answer-button no" id="noButton">NO</button>
+                    </div>
                 </div>
             </div>
             
@@ -417,7 +548,11 @@
             const volumeControl = document.getElementById('volumeControl');
             const audioStatus = document.getElementById('audioStatus');
             const instructions = document.getElementById('instructions');
+            const questionOverlay = document.getElementById('questionOverlay');
+            const yesButton = document.getElementById('yesButton');
+            const noButton = document.getElementById('noButton');
             let bubble = null;
+            let noClickCount = 0;
             
             // Definizione dei capitoli
             const chapters = {
@@ -498,6 +633,18 @@
                     ],
                     hasAudio: true,
                     audioFile: "chapter8.mp3"
+                },
+                9: {
+                    title: "Sgarri insieme",
+                    image: "index9.png", 
+                    messages: [
+                        "Polpettina:Smetti di fare puzzette che mi sta chiamando Roman!!!",
+                        "Orso:Fiiiii andiamo a mangiare :3!!! "
+                        
+                    ],
+                    hasAudio: true,
+                    audioFile: "chapter9.mp3",
+                    hasQuestion: true
                 }
             };
             
@@ -554,10 +701,67 @@
                 });
             }
             
+            // Gestione della domanda del capitolo 9
+            function initChapter9Question() {
+                // Gestisce il click su NO
+                noButton.addEventListener('click', function() {
+                    noClickCount++;
+                    
+                    // Calcola il fattore di scala (cresce esponenzialmente)
+                    const scaleFactor = 1 + (noClickCount * 0.5);
+                    
+                    // Imposta la variabile CSS per l'animazione
+                    yesButton.style.setProperty('--scale-factor', scaleFactor);
+                    
+                    // Applica l'animazione di crescita
+                    yesButton.classList.remove('growing');
+                    void yesButton.offsetWidth; // Force reflow
+                    yesButton.classList.add('growing');
+                    
+                    // Se ha raggiunto un certo numero di click, rende il pulsante SÌ fullscreen
+                    if (noClickCount >= 8) {
+                        setTimeout(() => {
+                            yesButton.classList.add('fullscreen-yes');
+                            yesButton.innerHTML = '🍕 SÌ AGLI SGARRI! 🍔';
+                        }, 500);
+                    }
+                });
+                
+                // Gestisce il click su SÌ
+                yesButton.addEventListener('click', function() {
+                    // Nasconde l'overlay della domanda
+                    questionOverlay.classList.remove('visible');
+                    
+                    // Mostra un messaggio di vittoria
+                    setTimeout(() => {
+                        createBubble(
+                            container.offsetWidth / 2, 
+                            container.offsetHeight / 2, 
+                            "🎉 Perfetto! Sgarriamo insieme! 🍕🍔🍰"
+                        );
+                    }, 500);
+                    
+                    // Reset del counter per eventuali ricarichi del capitolo
+                    noClickCount = 0;
+                    yesButton.classList.remove('fullscreen-yes', 'growing');
+                    yesButton.style.removeProperty('--scale-factor');
+                    yesButton.innerHTML = 'SÌ';
+                });
+            }
+            
             // Funzione per cambiare capitolo
             function changeChapter(chapterNum) {
                 currentChapter = chapterNum;
                 currentMessage = 0;
+                
+                // Reset degli elementi del capitolo 9
+                if (questionOverlay.classList.contains('visible')) {
+                    questionOverlay.classList.remove('visible');
+                }
+                noClickCount = 0;
+                yesButton.classList.remove('fullscreen-yes', 'growing');
+                yesButton.style.removeProperty('--scale-factor');
+                yesButton.innerHTML = 'SÌ';
                 
                 // Ferma l'audio se sta suonando
                 if (!audioElement.paused) {
@@ -581,6 +785,15 @@
                 } else {
                     audioControls.classList.remove('visible');
                     instructions.textContent = "Clicca sull'immagine per interagire";
+                }
+                
+                // Gestisce la domanda speciale del capitolo 9
+                if (chapters[chapterNum].hasQuestion) {
+                    instructions.textContent = "Capitolo speciale - Rispondi alla domanda!";
+                    // Mostra la domanda dopo un breve ritardo
+                    setTimeout(() => {
+                        questionOverlay.classList.add('visible');
+                    }, 1000);
                 }
                 
                 // Rimuove il fumetto se presente
@@ -666,6 +879,16 @@
                     return;
                 }
                 
+                // Evita che il click sull'overlay della domanda attivi la nuvoletta
+                if (event.target.closest('.question-overlay')) {
+                    return;
+                }
+                
+                // Non mostrare fumetti nel capitolo 9 se la domanda è visibile
+                if (currentChapter === 9 && questionOverlay.classList.contains('visible')) {
+                    return;
+                }
+                
                 // Ottiene le coordinate del click
                 const x = event.clientX;
                 const y = event.clientY;
@@ -682,6 +905,7 @@
             
             // Inizializzazione
             initAudio();
+            initChapter9Question();
             changeChapter(1);
         });
     </script>
